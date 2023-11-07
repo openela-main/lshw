@@ -1,0 +1,34 @@
+From e7cde935da1017976b51761fd0e14e598d98e26f Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Fri, 17 Mar 2023 14:58:53 +0100
+Subject: [PATCH 2/3] NVMe: fix logical name with native multipath
+
+address Github #92
+---
+ src/core/nvme.cc | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/src/core/nvme.cc b/src/core/nvme.cc
+index 6042788..9ede109 100644
+--- a/src/core/nvme.cc
++++ b/src/core/nvme.cc
+@@ -50,7 +50,15 @@ bool scan_nvme(hwNode & n)
+       ns.setBusInfo(guessBusInfo(n.name()));
+       ns.setPhysId(n.string_attr("nsid"));
+       ns.setDescription("NVMe disk");
+-      ns.setLogicalName(n.name());
++      // try to guess correct logical name when native NVMe multipath is enabled for NVMe devices
++      if(!exists("/dev/"+n.name()) &&
++		      uppercase(get_string("/sys/module/nvme_core/parameters/multipath"))=="Y" &&
++		      matches(n.name(), "^nvme[0-9]+c[0-9]+n[0-9]+$")) {
++	      size_t indexc = n.name().find("c");
++	      size_t indexn = n.name().find("n", indexc);
++	      ns.setLogicalName(n.name().erase(indexc, indexn - indexc));
++      } else
++	      ns.setLogicalName(n.name());
+       ns.setConfig("wwid",n.string_attr("wwid"));
+       scan_disk(ns);
+       device->addChild(ns);
+-- 
+2.33.1
+
