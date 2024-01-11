@@ -1,0 +1,45 @@
+From 42fef565731411a784101de614a54bff79d1858e Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Wed, 31 Aug 2022 11:14:23 +0200
+Subject: [PATCH 1/3] PA-RISC: handle pushd failure
+
+from https://github.com/lyonel/lshw/pull/89
+
+When /sys/devices/parisc does not exist, any directory with a name consisting of only numbers in current working directory was being interpreted as a device, for example:
+
+krzys_h@krzysh-laptop:/mnt/ramdisk $ ls /sys/devices/parisc
+ls: cannot access '/sys/devices/parisc': No such file or directory
+krzys_h@krzysh-laptop:/mnt/ramdisk $ mkdir 13374242
+krzys_h@krzysh-laptop:/mnt/ramdisk $ sudo lshw | grep 13374242 -B3 -A3
+             width: 64 bits
+             clock: 1600MHz (0.6ns)
+     *-generic UNCLAIMED
+          physical id: 13374242
+          bus info: parisc@13374242
+     *-pci
+          description: Host bridge
+          product: Xeon E3-1200 v3/4th Gen Core Processor DRAM Controller
+
+This commit fixes that by properly checking the return value from pushd.
+---
+ src/core/parisc.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/core/parisc.cc b/src/core/parisc.cc
+index 1e531e3..8a8c4d8 100644
+--- a/src/core/parisc.cc
++++ b/src/core/parisc.cc
+@@ -593,7 +593,9 @@ bool scan_parisc(hwNode & node)
+ 
+   if(core->getDescription()=="")
+     core->setDescription("Motherboard");
+-  pushd(DEVICESPARISC);
++
++  if(!pushd(DEVICESPARISC))
++    return false;
+   scan_device(*core);
+   popd();
+ 
+-- 
+2.33.1
+

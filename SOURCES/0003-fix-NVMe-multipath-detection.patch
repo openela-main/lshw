@@ -1,0 +1,26 @@
+From b4e067307906ec6f277cce5c8a882f5edd03cbbc Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Mon, 20 Mar 2023 13:37:30 +0100
+Subject: [PATCH 3/3] fix NVMe multipath detection
+
+cf. github #93
+---
+ src/core/nvme.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/core/nvme.cc b/src/core/nvme.cc
+index 9ede109..fb93cbd 100644
+--- a/src/core/nvme.cc
++++ b/src/core/nvme.cc
+@@ -52,7 +52,7 @@ bool scan_nvme(hwNode & n)
+       ns.setDescription("NVMe disk");
+       // try to guess correct logical name when native NVMe multipath is enabled for NVMe devices
+       if(!exists("/dev/"+n.name()) &&
+-		      uppercase(get_string("/sys/module/nvme_core/parameters/multipath"))=="Y" &&
++		      uppercase(hw::strip(get_string("/sys/module/nvme_core/parameters/multipath")))=="Y" &&
+ 		      matches(n.name(), "^nvme[0-9]+c[0-9]+n[0-9]+$")) {
+ 	      size_t indexc = n.name().find("c");
+ 	      size_t indexn = n.name().find("n", indexc);
+-- 
+2.33.1
+

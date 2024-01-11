@@ -2,7 +2,7 @@
 Summary:       Hardware lister
 Name:          lshw
 Version:       B.02.19.2
-Release:       9%{?dist}
+Release:       10%{?dist}
 License:       GPLv2
 URL:           http://ezix.org/project/wiki/HardwareLiSter
 Source0:       http://www.ezix.org/software/files/lshw-%{version}.tar.gz
@@ -76,6 +76,9 @@ Patch72:	0066-Fix-mistakes-in-Catalan-translation.patch
 Patch73:	0067-Add-Spanish-translation.patch
 Patch74:	0001-Github-PR85-Set-product-name-for-all-netdevs-sharing.patch
 Patch75:	0002-make-version-check-optional.patch
+Patch76:	0001-PA-RISC-handle-pushd-failure.patch
+Patch77:	0002-NVMe-fix-logical-name-with-native-multipath.patch
+Patch78:	0003-fix-NVMe-multipath-detection.patch
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
 BuildRequires: gcc
@@ -177,6 +180,9 @@ format.
 %patch73 -p1
 %patch74 -p1
 %patch75 -p1
+%patch76 -p1
+%patch77 -p1
+%patch78 -p1
 
 %build
 %cmake -DNOLOGO=ON -DHWDATA=OFF -DPOLICYKIT=ON -DSQLITE=ON -DBUILD_SHARED_LIBS=OFF  -GNinja
@@ -223,6 +229,9 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata
 %{_datadir}/polkit-1/actions/org.ezix.lshw.gui.policy
 
 %changelog
+* Wed May 24 2023 Tao Liu <ltao@redhat.com> - B.02.19.2-10
+- Update lshw to upstream latest(b4e06730790)
+
 * Tue Jul 19 2022 Tao Liu <ltao@redhat.com> - B.02.19.2-9
 - Fix patch issue in B.02.19.2-8
 
