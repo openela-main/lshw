@@ -1,0 +1,25 @@
+From 8318b40f989390530a3901b3c51c25465b4bde88 Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Sat, 6 Jan 2024 11:16:56 +0100
+Subject: [PATCH 1/5] get rid of GTK deprecation warning
+
+---
+ src/gui/gtk-lshw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gui/gtk-lshw.c b/src/gui/gtk-lshw.c
+index d3e531c..8d39ade 100644
+--- a/src/gui/gtk-lshw.c
++++ b/src/gui/gtk-lshw.c
+@@ -75,7 +75,7 @@ main (int argc, char *argv[])
+   textdomain (PACKAGE);
+ #endif
+ 
+-  GtkApplication *app = gtk_application_new ("org.ezix.gtk-lshw", G_APPLICATION_FLAGS_NONE);
++  GtkApplication *app = gtk_application_new ("org.ezix.gtk-lshw", 0); // was G_APPLICATION_FLAGS_NONE
+   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
+   int status = g_application_run (G_APPLICATION (app), argc, argv);
+   g_object_unref (app);
+-- 
+2.40.1
+

@@ -1,0 +1,110 @@
+From 9372b680418cd66f90ffee722fa6d10042115b45 Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Wed, 28 Aug 2024 11:59:04 +0200
+Subject: [PATCH 5/5] merge Github PR#101
+
+cf. https://github.com/lyonel/lshw/pull/101
+---
+ src/core/db.cc      | 5 +----
+ src/core/network.cc | 2 +-
+ src/core/pci.cc     | 8 ++++----
+ src/core/volumes.cc | 4 +++-
+ 4 files changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/src/core/db.cc b/src/core/db.cc
+index d080295..4474cd6 100644
+--- a/src/core/db.cc
++++ b/src/core/db.cc
+@@ -300,10 +300,7 @@ void statement::prepare(const std::string & s)
+       sqlite3_finalize(implementation->stmt);
+   }
+   else
+-    implementation = new statement_i;
+-
+-  if(!implementation)
+-    throw exception("memory exhausted");
++    throw exception("undefined statement");
+ 
+   if(sqlite3_prepare(implementation->db->implementation->connection, s.c_str(), -1, &implementation->stmt, NULL) != SQLITE_OK)
+     throw exception(implementation->db->implementation->connection);
+diff --git a/src/core/network.cc b/src/core/network.cc
+index d114d02..b38a032 100644
+--- a/src/core/network.cc
++++ b/src/core/network.cc
+@@ -354,7 +354,7 @@ static void scan_ip(hwNode & interface)
+ {
+   int fd = socket(AF_INET, SOCK_DGRAM, 0);
+ 
+-  if (fd > 0)
++  if (fd >= 0)
+   {
+     struct ifreq ifr;
+ 
+diff --git a/src/core/pci.cc b/src/core/pci.cc
+index 5040d75..009f844 100644
+--- a/src/core/pci.cc
++++ b/src/core/pci.cc
+@@ -566,7 +566,7 @@ long u4 = -1)
+ static u_int32_t get_conf_long(struct pci_dev d,
+ unsigned int pos)
+ {
+-  if (pos > sizeof(d.config))
++  if (pos + 3 >= sizeof(d.config))
+     return 0;
+ 
+   return d.config[pos] | (d.config[pos + 1] << 8) |
+@@ -577,7 +577,7 @@ unsigned int pos)
+ static u_int16_t get_conf_word(struct pci_dev d,
+ unsigned int pos)
+ {
+-  if (pos > sizeof(d.config))
++  if (pos + 1 >= sizeof(d.config))
+     return 0;
+ 
+   return d.config[pos] | (d.config[pos + 1] << 8);
+@@ -587,7 +587,7 @@ unsigned int pos)
+ static u_int8_t get_conf_byte(struct pci_dev d,
+ unsigned int pos)
+ {
+-  if (pos > sizeof(d.config))
++  if (pos >= sizeof(d.config))
+     return 0;
+ 
+   return d.config[pos];
+@@ -1145,10 +1145,10 @@ bool scan_pci(hwNode & n)
+       string devicepath = string(devices[i]->d_name)+"/config";
+       sysfs::entry device_entry = sysfs::entry::byBus("pci", devices[i]->d_name);
+       struct pci_dev d;
++      memset(&d, 0, sizeof(d));
+       int fd = open(devicepath.c_str(), O_RDONLY);
+       if (fd >= 0)
+       {
+-        memset(&d, 0, sizeof(d));
+         if(read(fd, d.config, 64) == 64)
+         {
+           if(read(fd, d.config+64, sizeof(d.config)-64) != sizeof(d.config)-64)
+diff --git a/src/core/volumes.cc b/src/core/volumes.cc
+index e1ce42f..8e8d485 100644
+--- a/src/core/volumes.cc
++++ b/src/core/volumes.cc
+@@ -594,6 +594,7 @@ static bool detect_hfsx(hwNode & n, source & s)
+   uint16_t version = 0;
+   uint32_t attributes = 0;
+   time_t mkfstime, fscktime, wtime;
++  uint8_t uuidarray[16] = {0};
+ 
+   hfsvolume = s;
+   hfsvolume.blocksize = HFSBLOCKSIZE;
+@@ -636,7 +637,8 @@ static bool detect_hfsx(hwNode & n, source & s)
+   else
+     n.setConfig("state", "unclean");
+   
+-  n.setSerial(uuid((uint8_t*)&vol->finderInfo[6]));	// finderInfo[6] and finderInfo[7] contain uuid
++  memcpy(uuidarray, (uint8_t*)&vol->finderInfo[6], 8);
++  n.setSerial(uuid(uuidarray));	// finderInfo[6] and finderInfo[7] contain uuid
+ 
+   if(vol->finderInfo[0])
+     n.addCapability("bootable");
+-- 
+2.40.1
+

@@ -1,0 +1,23 @@
+From 15e4ca64647ad119b69be63274e5de2696d3934f Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Sat, 6 Jan 2024 11:33:39 +0100
+Subject: [PATCH 3/5] update changelog
+
+---
+ docs/Changelog | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/docs/Changelog b/docs/Changelog
+index 0f648f5..eeafc78 100644
+--- a/docs/Changelog
++++ b/docs/Changelog
+@@ -1,3 +1,6 @@
++* lshw B.02.20
++  bug fixes
++  code cleanup
+ * lshw B.02.19
+   detection of NVMe disks
+   detection of SD/MMC and SDIO devices
+-- 
+2.40.1
+
