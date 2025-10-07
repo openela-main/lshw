@@ -1,0 +1,27 @@
+From befc2e215ab1b86af1af63fbfc26b56cd212339d Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Wed, 12 Jun 2024 13:50:01 +0200
+Subject: [PATCH] escape '\' in JSON output
+
+some DMI/SMBIOS contain '\' at the end of their strings (#807)
+---
+ src/core/osutils.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/core/osutils.cc b/src/core/osutils.cc
+index cfa09ca..a3d8c12 100644
+--- a/src/core/osutils.cc
++++ b/src/core/osutils.cc
+@@ -526,6 +526,9 @@ string escapeJSON(const string & s)
+       case '"':
+         result += "\\\"";
+         break;
++      case '\\':
++        result += "\\\\";
++        break;
+     default:
+       result += s[i];
+   }
+-- 
+2.47.0
+

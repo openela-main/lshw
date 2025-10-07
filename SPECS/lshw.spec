@@ -1,13 +1,12 @@
 Summary:       Hardware lister
 Name:          lshw
 Version:       B.02.19.2
-Release:       6%{?dist}
+Release:       6%{?dist}.1
 License:       GPLv2
 Group:         Applications/System
 URL:           http://ezix.org/project/wiki/HardwareLiSter
 Source0:       http://www.ezix.org/software/files/lshw-%{version}.tar.gz
 Patch1:        lshw-B.02.18-scandir.patch
-Patch2:        lshw-B.02.18-revert-json.patch
 Patch3:        lshw-B.02.19.2-cmake.patch
 Patch4:        lshw-B.02.19.2-Add-the-FindPkgConfig-to-CMakeLists.patch
 Patch5:        0001-report-CPU-family-model-stepping.patch
@@ -49,6 +48,9 @@ Patch40:       rhelonly-cleanup-remove-unused-support.c-support.h-generated-.pat
 Patch41:       0001-Report-correct-memory-size-on-SMBIOS-2.7.patch
 Patch42:       0001-devtree-Add-UUID-property.patch
 Patch43:       0001-Fix-getting-size-of-memory-banks-32GiB.patch
+Patch44:       0001-JSON-output-clean-up-list-object.patch
+Patch45:       0001-clean-up-JSON-output.patch
+Patch46:       0001-escape-in-JSON-output.patch
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
@@ -84,49 +86,51 @@ format.
 
 %prep
 %setup -q
-%patch01 -p1
-%patch02 -R -p1
-%patch03 -p1
-%patch04 -p1
-%patch05 -p1
-%patch06 -p1
-%patch07 -p1
-%patch08 -p1
-%patch09 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
-%patch25 -p1
-%patch26 -p1
-%patch27 -p1
-%patch28 -p1
-%patch29 -p1
-%patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
-%patch34 -p1
-%patch35 -p1
-%patch36 -p1
-%patch37 -p1
-%patch38 -p1
-%patch39 -p1
-%patch40 -p1
-%patch41 -p1
-%patch42 -p1
-%patch43 -p1
+%patch -P1 -p1
+%patch -P3 -p1
+%patch -P4 -p1
+%patch -P5 -p1
+%patch -P6 -p1
+%patch -P7 -p1
+%patch -P8 -p1
+%patch -P9 -p1
+%patch -P10 -p1
+%patch -P11 -p1
+%patch -P12 -p1
+%patch -P13 -p1
+%patch -P14 -p1
+%patch -P15 -p1
+%patch -P16 -p1
+%patch -P17 -p1
+%patch -P18 -p1
+%patch -P19 -p1
+%patch -P20 -p1
+%patch -P21 -p1
+%patch -P22 -p1
+%patch -P23 -p1
+%patch -P24 -p1
+%patch -P25 -p1
+%patch -P26 -p1
+%patch -P27 -p1
+%patch -P28 -p1
+%patch -P29 -p1
+%patch -P30 -p1
+%patch -P31 -p1
+%patch -P32 -p1
+%patch -P33 -p1
+%patch -P34 -p1
+%patch -P35 -p1
+%patch -P36 -p1
+%patch -P37 -p1
+%patch -P38 -p1
+%patch -P39 -p1
+%patch -P40 -p1
+%patch -P41 -p1
+%patch -P42 -p1
+%patch -P43 -p1
+%patch -P44 -p1
+%patch -P45 -p1
+%patch -P46 -p1
 
 %build
 mkdir build && pushd build
@@ -174,6 +178,9 @@ src/lshw -json \
 %{_datadir}/polkit-1/actions/org.ezix.lshw.gui.policy
 
 %changelog
+* Wed May 14 2025 Tao Liu <ltao@redhat.com> - B.02.19.2-6.1
+- Resolves: RHEL-91281
+
 * Tue Jun 08 2021 Tao Liu <ltao@redhat.com> - B.02.19.2-6
 - Fix getting size of memory banks <32GiB
 
