@@ -2,7 +2,7 @@
 Summary:       Hardware lister
 Name:          lshw
 Version:       B.02.20
-Release:       1%{?dist}
+Release:       2%{?dist}
 License:       GPLv2
 URL:           http://ezix.org/project/wiki/HardwareLiSter
 Source0:       http://www.ezix.org/software/files/lshw-%{version}.tar.gz
@@ -14,6 +14,7 @@ Patch10:	0002-update-data-files.patch
 Patch11:	0003-update-changelog.patch
 Patch12:	0004-escape-in-JSON-output.patch
 Patch13:	0005-merge-Github-PR-101.patch
+Patch14:	0001-merge-Github-PR-103.patch
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
 BuildRequires: gcc
@@ -93,6 +94,9 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata
 %{_datadir}/polkit-1/actions/org.ezix.lshw.gui.policy
 
 %changelog
+* Mon May 5 2025 Tao Liu <ltao@redhat.com> - B.02.20-2
+- Release B.02.20-2 update to upstream latest(98b74f64e76)
+
 * Wed Nov 6 2024 Tao Liu <ltao@redhat.com> - B.02.20-1
 - Release B.02.20-1 update to upstream latest(9372b680418)
 
