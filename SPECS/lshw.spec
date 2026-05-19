@@ -2,7 +2,7 @@
 Summary:       Hardware lister
 Name:          lshw
 Version:       B.02.20
-Release:       2%{?dist}
+Release:       4%{?dist}
 License:       GPLv2
 URL:           http://ezix.org/project/wiki/HardwareLiSter
 Source0:       http://www.ezix.org/software/files/lshw-%{version}.tar.gz
@@ -15,6 +15,10 @@ Patch11:	0003-update-changelog.patch
 Patch12:	0004-escape-in-JSON-output.patch
 Patch13:	0005-merge-Github-PR-101.patch
 Patch14:	0001-merge-Github-PR-103.patch
+Patch15:	0001-fix-not-closing-fd-during-framebuffer-detection.patch
+Patch16:	0002-improve-fb-detection.patch
+Patch17:	0003-another-try-at-fixing-the-Github-fbdev-issue.patch
+Patch18:	0001-Add-accelerator-hardware-class.patch
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
 BuildRequires: gcc
@@ -94,6 +98,12 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata
 %{_datadir}/polkit-1/actions/org.ezix.lshw.gui.policy
 
 %changelog
+* Mon Nov 24 2025 Tao Liu <ltao@redhat.com> - B.02.20-4
+- Release B.02.20-4 update to upstream latest(209f8306e95)
+
+* Wed Oct 22 2025 Tao Liu <ltao@redhat.com> - B.02.20-3
+- Release B.02.20-3 update to upstream latest(af7c69e1b6e)
+
 * Mon May 5 2025 Tao Liu <ltao@redhat.com> - B.02.20-2
 - Release B.02.20-2 update to upstream latest(98b74f64e76)
 

@@ -1,0 +1,56 @@
+From 8798c9f1a2f62b02188be155badacffb229c69a6 Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Mon, 28 Jul 2025 23:16:15 +0200
+Subject: [PATCH 2/3] improve fb detection
+
+based on github PR#106
+---
+ src/core/fb.cc    | 7 +++++++
+ src/core/sysfs.cc | 1 +
+ 2 files changed, 8 insertions(+)
+
+diff --git a/src/core/fb.cc b/src/core/fb.cc
+index 465c899..85c2d17 100644
+--- a/src/core/fb.cc
++++ b/src/core/fb.cc
+@@ -6,6 +6,8 @@
+ 
+ #include "version.h"
+ #include "fb.h"
++#include "sysfs.h"
++#include "osutils.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+@@ -239,11 +241,16 @@ bool scan_fb(hwNode & n)
+ 
+       if (ioctl(fd[i], FBIOGET_FSCREENINFO, &fbi) == 0)
+       {
++        fbdev = n.findChildByBusInfo(sysfs::entry::byClass("graphics", "fb"+tostring(i)).businfo());
++
++        if(!fbdev)
++        {
+         fbdev =
+           n.
+           findChildByResource(hw::resource::
+           iomem((unsigned long) fbi.smem_start,
+           fbi.smem_len));
++	}
+ 
+         if (fbdev)
+         {
+diff --git a/src/core/sysfs.cc b/src/core/sysfs.cc
+index fda1e9b..f7296a3 100644
+--- a/src/core/sysfs.cc
++++ b/src/core/sysfs.cc
+@@ -189,6 +189,7 @@ static string sysfstobusinfo(const string & path)
+ 
+ string entry::businfo() const
+ {
++  if(!This) return "";
+   string result = sysfstobusinfo(This->devpath);
+   if (result.empty())
+     result = sysfstobusinfo(dirname(This->devpath));
+-- 
+2.47.0
+

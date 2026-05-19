@@ -1,0 +1,77 @@
+From 209f8306e9500cf5ac32f01abb11ff6dcce76b0a Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Mon, 3 Nov 2025 14:18:42 +0100
+Subject: [PATCH] Add accelerator hardware class
+
+merge Github PR#107
+---
+ src/core/hw.cc  | 3 +++
+ src/core/hw.h   | 3 ++-
+ src/core/pci.cc | 9 +++++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/src/core/hw.cc b/src/core/hw.cc
+index 1c1dad4..f198a25 100644
+--- a/src/core/hw.cc
++++ b/src/core/hw.cc
+@@ -231,6 +231,9 @@ const char *hwNode::getClassName() const
+       case volume:
+         return "volume";
+ 
++      case accelerator:
++       return "accelerator";
++
+       default:
+         return "generic";
+     }
+diff --git a/src/core/hw.h b/src/core/hw.h
+index 451e9b3..f4f9272 100644
+--- a/src/core/hw.h
++++ b/src/core/hw.h
+@@ -28,7 +28,8 @@ namespace hw
+     communication,
+     power,
+     volume,
+-    generic
++    generic,
++    accelerator
+   } hwClass;
+ 
+   typedef enum { none, iomem, ioport, mem, irq, dma }
+diff --git a/src/core/pci.cc b/src/core/pci.cc
+index 009f844..08f2263 100644
+--- a/src/core/pci.cc
++++ b/src/core/pci.cc
+@@ -179,6 +179,9 @@ __ID("@(#) $Id$");
+ #define PCI_CLASS_SERIAL_USB         0x0c03
+ #define PCI_CLASS_SERIAL_FIBER       0x0c04
+ 
++#define PCI_BASE_CLASS_ACCELERATOR   0x12
++#define PCI_CLASS_ACCELERATOR       0x1200
++
+ #define PCI_CLASS_OTHERS             0xff
+ 
+ #define PCI_ADDR_MEM_MASK (~(pciaddr_t) 0xf)
+@@ -393,6 +396,8 @@ static const char *get_class_name(unsigned int c)
+       return "processor";
+     case PCI_BASE_CLASS_SERIAL:
+       return "serial";
++    case PCI_BASE_CLASS_ACCELERATOR:
++      return "accelerator";
+   }
+ 
+   return "generic";
+@@ -907,6 +912,10 @@ static hwNode *scan_pci_dev(struct pci_dev &d, hwNode & n)
+           case PCI_BASE_CLASS_INPUT:
+             deviceclass = hw::input;
+             break;
++         case PCI_BASE_CLASS_ACCELERATOR:
++               deviceclass = hw::accelerator;
++               deviceicon = "accelerator";
++               break;
+           case PCI_BASE_CLASS_PROCESSOR:
+             deviceclass = hw::processor;
+             break;
+-- 
+2.47.0
+
