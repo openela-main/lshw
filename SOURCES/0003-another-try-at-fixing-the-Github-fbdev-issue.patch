@@ -1,0 +1,26 @@
+From af7c69e1b6e9bfc81aef1c167f18d1515f413963 Mon Sep 17 00:00:00 2001
+From: Lyonel Vincent <lyonel@ezix.org>
+Date: Tue, 9 Sep 2025 23:30:06 +0200
+Subject: [PATCH 3/3] another try at fixing the Github fbdev issue
+
+cf. previous commit
+---
+ src/core/fb.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/core/fb.cc b/src/core/fb.cc
+index 85c2d17..d32434c 100644
+--- a/src/core/fb.cc
++++ b/src/core/fb.cc
+@@ -241,7 +241,7 @@ bool scan_fb(hwNode & n)
+ 
+       if (ioctl(fd[i], FBIOGET_FSCREENINFO, &fbi) == 0)
+       {
+-        fbdev = n.findChildByBusInfo(sysfs::entry::byClass("graphics", "fb"+tostring(i)).businfo());
++        fbdev = n.findChildByBusInfo(sysfs::entry::byClass("graphics", "fb"+tostring(i)+"/device").businfo());
+ 
+         if(!fbdev)
+         {
+-- 
+2.47.0
+
